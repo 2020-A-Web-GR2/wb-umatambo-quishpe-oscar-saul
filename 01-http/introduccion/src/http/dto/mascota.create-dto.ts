@@ -1,0 +1,6 @@
+// @IsAlpha()
+// @IsNotEmpty()
+// @MinLength()
+// @MaxLength()
+// @IsBoolean()
+// @IsEmpty()

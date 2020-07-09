@@ -1,4 +1,15 @@
-import {BadRequestException, Controller, Delete, Get, Header, Headers, HttpCode, Param, Post} from "@nestjs/common";
+import {
+    BadRequestException, Body,
+    Controller,
+    Delete,
+    Get,
+    Header,
+    Headers,
+    HttpCode,
+    Param,
+    Post,
+    Query
+} from "@nestjs/common";
 /*
 * http://localhost:3001/juegos-http
  */
@@ -41,4 +52,27 @@ export class HttpJuegoController{
             return edad + altura;
         }
     }
+
+    @Get('parametros-consulta')
+    parametrosConsulta(
+        @Query() parametrosDeConsulta
+    ) {
+        console.log('parametrosDeConsulta', parametrosDeConsulta);
+        if(parametrosDeConsulta.nombre!=null && parametrosDeConsulta.apellido!=null){
+            //if(n.equals('')){return '= ) \t ' + a;}
+            //if(a.equals('')){return n + '\t = )';}
+            return parametrosDeConsulta.nombre + '\t' +parametrosDeConsulta.apellido;
+        }else{
+            return '= )'
+        }
+    }
+
+    @Post('parametros-cuerpo')
+    parametrosCuerpo(
+        @Body() parametrosDeCuerpo
+    ){
+        console.log('ParametrosDeCuerpo', parametrosDeCuerpo)
+        return 'Registro creado';
+    }
+
 }
