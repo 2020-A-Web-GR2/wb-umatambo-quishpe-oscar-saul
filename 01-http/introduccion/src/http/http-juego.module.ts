@@ -4,7 +4,9 @@ import {HttpJuegoController} from "./http-juego.controller";
 // @Nombre() ------> esto es un decorador
 @Module({
     imports: [ ],
-    controllers: [ HttpJuegoController],
+    controllers: [
+        HttpJuegoController
+    ],
     providers: [ ],
 })
 export class HttpJuegoModule{
