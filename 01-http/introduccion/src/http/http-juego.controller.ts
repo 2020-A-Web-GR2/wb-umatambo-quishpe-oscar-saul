@@ -8,7 +8,7 @@ import {
     HttpCode,
     Param,
     Post,
-    Query
+    Query, Req, Res
 } from "@nestjs/common";
 /*
 * http://localhost:3001/juegos-http
@@ -73,6 +73,66 @@ export class HttpJuegoController{
     ){
         console.log('ParametrosDeCuerpo', parametrosDeCuerpo)
         return 'Registro creado';
+    }
+
+    @Get('guardarCookieInsegura')
+    guardarCookieInsegura(
+        @Query() parametrosConsulta,
+        @Req() req,
+        @Res() res,
+    ){
+        res.cookie(
+            'galletaInsegura',
+            'Web :3',
+            {
+                secure: false
+            }
+        );
+        const mensaje = {
+            mensaje: 'ok'
+        }
+        res.send(mensaje);
+    }
+
+    @Get('guardarCookieSegura')
+    guardarCookieSegura(
+        @Query() parametrosConsulta,
+        @Req() req,
+        @Res() res,
+    ){
+        res.cookie(
+            'galletaSegura',
+            'Web :3',
+            {
+                secure: true
+            }
+        );
+        const mensaje = {
+            mensaje: 'tengo hambre'
+        }
+        res.send(mensaje);
+    }
+
+    @Get('mostrarCookies')
+    mostrarCookies(
+        @Req() req
+    ){
+        const  mensaje = {
+            sinFirmar: req.cookies,
+            firmadas: req.signedCookies
+        }
+        return mensaje;
+    }
+
+    @Get('guardarCookieFirmada')
+    guardarCookieFirmada(
+        @Res() res
+    ){
+        res.cookie('firmada', 'poliburguer', {signed: true});
+        const mensaje = {
+            mensaje: 'ok'
+        };
+        res.send(mensaje);
     }
 
 }

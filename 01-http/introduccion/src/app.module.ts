@@ -2,9 +2,11 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import {HttpJuegoModule} from "./http/http-juego.module";
+import {HttpCalculadoraModule} from "./calculator/http-calculadora.module";
 
 @Module({
   imports: [
+      HttpCalculadoraModule,
       HttpJuegoModule
       // se importa otros modulos
   ],
