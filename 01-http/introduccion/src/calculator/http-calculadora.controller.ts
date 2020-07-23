@@ -74,7 +74,6 @@ export class HttpCalculadoraController{
             try{
                 const error: ValidationError[] = await validate(numeros.x)
                 const error2: ValidationError[] = await validate(numeros.y)
-
                 if(error.length == 0 && error2.length == 0) {
                   const suma = numeros.x + numeros.y
                   res.send({
