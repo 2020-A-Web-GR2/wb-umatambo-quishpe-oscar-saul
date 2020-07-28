@@ -4,7 +4,6 @@ import {
     Controller,
     Delete,
     Get,
-    Header,
     HttpCode,
     Param,
     Post, Put,
@@ -35,13 +34,18 @@ export class HttpCalculadoraController{
                     {
                         secure: false
                     }
-                );
+                )
+
+                res.cookie('Puntos', 100, {signed: true})
+
                 res.send({
-                    mensaje: 'Nombre de usuario guardado'
+                    Mensaje: 'Nombre de usuario guardado ',
+                    Usuario: parametrosConsulta.nombre,
+                    Puntos: 100
                 })
             }else{
                 console.error('Error', error)
-                throw new BadRequestException('NOmbre de Usuario inválido')
+                throw new BadRequestException('Nombre de Usuario inválido')
             }
         }catch (e){
             console.error('Error', e)
@@ -54,7 +58,8 @@ export class HttpCalculadoraController{
         @Req() req
     ){
         const  mensaje = {
-            cook: req.cookies
+            cook: req.cookies,
+            cookfirm: req.signedCookies
         }
         return mensaje;
     }
@@ -72,16 +77,32 @@ export class HttpCalculadoraController{
             numeros.x = Number(valores.x)
             numeros.y = Number(valores.y)
             try{
-                const error: ValidationError[] = await validate(numeros.x)
-                const error2: ValidationError[] = await validate(numeros.y)
-                if(error.length == 0 && error2.length == 0) {
+                const error: ValidationError[] = await validate(numeros)
+                if(error.length == 0) {
                   const suma = numeros.x + numeros.y
+                  let mens = ''
+                  let puntos = req.signedCookies.Puntos - Math.abs(suma);
+                  if(puntos<=0){
+                      mens = req.cookies.Usuario + ' haz terminado tus puntos, se te han restablecido de nuevo';
+                      puntos = 100;
+                  }else{
+                      mens = req.cookies.Usuario + ' te quedan ' + puntos + ' puntos'
+                  }
+                  res.cookie(
+                        'Puntos',
+                        puntos,
+                        {signed: true}
+                    );
                   res.send({
-                      mensaje: 'La suma de ('+numeros.x+'+'+numeros.y+') es igual a = '+ suma
-                  })
+                        resultado: 'La suma de ('+numeros.x+'+'+numeros.y+') es igual a = '+ suma,
+                        mensaje: mens
+                    });
+
                 }else{
-                    console.error('Error', error)
-                    throw new BadRequestException('Valores inválidos')
+                    console.log('Valores Inválidos')
+                    res.send({
+                        ERROR: 'Valores Inválidos'
+                    });
                 }
             }catch (e) {
                 console.error('Error', e)
@@ -89,6 +110,7 @@ export class HttpCalculadoraController{
             }
         }else{
             console.log('No se a definido ningun Nombre de usuario')
+            throw new BadRequestException('No se a definido ningun Nombre de usuario')
         }
     }
 
@@ -98,31 +120,46 @@ export class HttpCalculadoraController{
         @Body() valores,
         @Req() req,
         @Res() res
-    ){
+    ) {
         const usuario = req.cookies.Usuario
-        if(usuario!=undefined){
+        if (usuario != undefined) {
             const numeros = new NumerosCreateDto()
             numeros.x = Number(valores.x)
             numeros.y = Number(valores.y)
-            try{
-                const error: ValidationError[] = await validate(numeros.x)
-                const error2: ValidationError[] = await validate(numeros.y)
-
-                if(error.length == 0 && error2.length == 0) {
+            try {
+                const error: ValidationError[] = await validate(numeros)
+                if (error.length == 0) {
                     const resta = numeros.x - numeros.y
+                    let mens = ''
+                    let puntos = req.signedCookies.Puntos - Math.abs(resta);
+                    if(puntos<=0){
+                        mens = req.cookies.Usuario + ' haz terminado tus puntos, se te han restablecido de nuevo';
+                        puntos = 100;
+                    }else{
+                        mens = req.cookies.Usuario + ' te quedan ' + puntos + ' puntos'
+                    }
+                    res.cookie(
+                        'Puntos',
+                        puntos,
+                        {signed: true}
+                    );
                     res.send({
-                        mensaje: 'La suma de ('+numeros.x+'-'+numeros.y+') es igual a = '+ resta
-                    })
-                }else{
-                    console.error('Error', error)
-                    throw new BadRequestException('Valores inválidos')
+                        resultado: 'La resta de ('+numeros.x+'-'+numeros.y+') es igual a = '+ resta,
+                        mensaje: mens
+                    });
+                } else {
+                    console.log('Valores Inválidos')
+                    res.send({
+                        ERROR: 'Valores Inválidos'
+                    });
                 }
-            }catch (e) {
+            } catch (e) {
                 console.error('Error', e)
                 throw new BadRequestException('Error en la validación de numeros')
             }
-        }else{
+        } else {
             console.log('No se a definido ningun Nombre de usuario')
+            throw new BadRequestException('No se a definido ningun Nombre de usuario')
         }
     }
 
@@ -131,35 +168,50 @@ export class HttpCalculadoraController{
     async multiplicacion(
         @Req() req,
         @Res() res
-    ){
+    ) {
         const usuario = req.cookies.Usuario
-        if(usuario!=undefined){
+        if (usuario != undefined) {
             const numeros = new NumerosCreateDto()
             numeros.x = Number(req.headers.x)
             numeros.y = Number(req.headers.y)
-            try{
-                const error: ValidationError[] = await validate(numeros.x)
-                const error2: ValidationError[] = await validate(numeros.y)
-
-                if(error.length == 0 && error2.length == 0) {
+            try {
+                const error: ValidationError[] = await validate(numeros)
+                if (error.length == 0) {
                     const multiplicaion = numeros.x * numeros.y
+                    let mens = ''
+                    let puntos = req.signedCookies.Puntos - Math.abs(multiplicaion);
+                    if(puntos<=0){
+                        mens = req.cookies.Usuario + ' haz terminado tus puntos, se te han restablecido de nuevo';
+                        puntos = 100;
+                    }else{
+                        mens = req.cookies.Usuario + ' te quedan ' + puntos + ' puntos'
+                    }
+                    res.cookie(
+                        'Puntos',
+                        puntos,
+                        {signed: true}
+                    );
                     res.send({
-                        mensaje: 'La multiplicacion de ('+numeros.x+'*'+numeros.y+') es igual a = '+ multiplicaion
-                    })
-                }else{
-                    console.error('Error', error)
-                    throw new BadRequestException('Valores inválidos')
+                        resultado: 'La multiplicaión de ('+numeros.x+'*'+numeros.y+') es igual a = '+ multiplicaion,
+                        mensaje: mens
+                    });
+                } else {
+                    console.log('Valores Inválidos')
+                    res.send({
+                        ERROR: 'Valores Inválidos'
+                    });
                 }
-            }catch (e) {
+            } catch (e) {
                 console.error('Error', e)
                 throw new BadRequestException('Error en la validación de numeros')
             }
-        }else{
+        } else {
             console.log('No se a definido ningun Nombre de usuario')
+            throw new BadRequestException('No se a definido ningun Nombre de usuario')
         }
     }
 
-    @Post('/divicion/:x/:y')
+    @Post('/division/:x/:y')
     @HttpCode(201)
     async divicion(
         @Param() valores,
@@ -172,30 +224,49 @@ export class HttpCalculadoraController{
             numeros.x = Number(valores.x)
             numeros.y = Number(valores.y)
             try{
-                const error: ValidationError[] = await validate(numeros.x)
-                const error2: ValidationError[] = await validate(numeros.y)
-
-                if(error.length == 0 && error2.length == 0) {
+                const error: ValidationError[] = await validate(numeros)
+                if(error.length == 0) {
                     if(numeros.y!=0) {
-                        const divicion = numeros.x / numeros.y
+                        const division = numeros.x / numeros.y
+                        let mens = ''
+                        let puntos = req.signedCookies.Puntos - Math.abs(division);
+                        if(puntos<=0){
+                            mens = req.cookies.Usuario + ' haz terminado tus puntos, se te han restablecido de nuevo';
+                            puntos = 100;
+                        }else{
+                            mens = req.cookies.Usuario + ' te quedan ' + puntos + ' puntos'
+                        }
+                        res.cookie(
+                            'Puntos',
+                            puntos,
+                            {signed: true}
+                        );
                         res.send({
-                            mensaje: 'La suma de (' + numeros.x + '/' + numeros.y + ') es igual a = ' + divicion
-                        })
+                            resultado: 'La división de ('+numeros.x+'/'+numeros.y+') es igual a = '+ division,
+                            mensaje: mens
+                        });
                     }else{
-                        console.error('No existe la divición para cero')
+                        console.log('No existe la divición para cero')
+                        res.send({
+                            ERROR: 'No existe la divición para cero'
+                        });
                     }
                 }else{
-                    console.error('Error', error)
-                    throw new BadRequestException('Valores inválidos')
+                    console.log('Valores Inválidos')
+                    res.send({
+                        ERROR: 'Valores Inválidos'
+                    });
                 }
             }catch (e) {
-                console.error('Error', e)
-                throw new BadRequestException('Error en la validación de numeros')
+                console.log('Error', e)
+                throw new BadRequestException('Error en la validación de números')
             }
         }else{
             console.log('No se a definido ningun Nombre de usuario')
+            throw new BadRequestException('No se a definido ningun Nombre de usuario')
         }
     }
+
 
 
 
