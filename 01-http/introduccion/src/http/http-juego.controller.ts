@@ -10,6 +10,8 @@ import {
     Post,
     Query, Req, Res
 } from "@nestjs/common";
+import {validate, ValidationError} from "class-validator";
+import {MascotaCreateDto} from "./dto/mascota.create-dto";
 /*
 * http://localhost:3001/juegos-http
  */
@@ -73,6 +75,33 @@ export class HttpJuegoController{
     ){
         console.log('ParametrosDeCuerpo', parametrosDeCuerpo)
         return 'Registro creado';
+    }
+
+    @Post('/parametros-cuerpo')
+    async parametrosCuerpoEjemplo(
+        @Body() parametrosCuerpo
+    ) {
+        const mascotaValidador = new MascotaCreateDto();
+        mascotaValidador.casada = parametrosCuerpo.casada;
+        mascotaValidador.edad = parametrosCuerpo.edad;
+        mascotaValidador.ligada = parametrosCuerpo.ligada;
+        mascotaValidador.nombre = parametrosCuerpo.nombre;
+        mascotaValidador.peso = parametrosCuerpo.peso;
+        try {
+            const errores: ValidationError[] = await validate(mascotaValidador);
+            if (errores.length > 0) {
+                console.error('Error', errores);
+                throw new BadRequestException('Error al validar.')
+            } else {
+                const mensajeCorrecto = {
+                    mensaje: 'Se creo correctamente'
+                }
+                return mensajeCorrecto;
+            }
+        } catch (e) {
+            console.error('Error', e);
+            throw new BadRequestException('Error al validar.')
+        }
     }
 
     @Get('guardarCookieInsegura')
