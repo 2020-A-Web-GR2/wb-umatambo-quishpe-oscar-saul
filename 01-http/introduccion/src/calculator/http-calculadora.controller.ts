@@ -17,6 +17,7 @@ import {NumerosCreateDto} from "./dto/numeros.create-dto";
 @Controller('calculadora-http')
 export class HttpCalculadoraController{
 
+// Guardar Nombre de Usuario y Puntos
     @Get('/guardarCookieInseguraNombre') //@HttpCode(202)
     async guardarCookkieInseguraNombre(
         @Query() parametrosConsulta,
@@ -64,6 +65,8 @@ export class HttpCalculadoraController{
         return mensaje;
     }
 
+//SUMAR
+//QUERY
     @Get('/suma')
     @HttpCode(200)
     async suma(
@@ -114,6 +117,8 @@ export class HttpCalculadoraController{
         }
     }
 
+//RESTA
+//BODY
     @Put('/resta')
     @HttpCode(201)
     async resta(
@@ -163,6 +168,8 @@ export class HttpCalculadoraController{
         }
     }
 
+//MULTIPLICACIÓN
+//HEADERS
     @Delete('/multiplicacion')
     @HttpCode(200)
     async multiplicacion(
@@ -211,6 +218,8 @@ export class HttpCalculadoraController{
         }
     }
 
+//DIVISIÓN
+//RUTA
     @Post('/division/:x/:y')
     @HttpCode(201)
     async divicion(
