@@ -6,7 +6,7 @@ Umatambo Oscar
 ** Excel con requisitos e historias de usuario de librería online
 
 ** Prototipos navegables, disponibles en:
-https://www.figma.com/file/miW2Up9cV9NlKv4X3jlVMP/Libreria?node-id=0%3A1 
+https://www.figma.com/file/miW2Up9cV9NlKv4X3jlVMP/Libreria?node-id=12%3A101
 
 ** Diseño casos de uso -- Abrir con la herramienta rational rose
 
