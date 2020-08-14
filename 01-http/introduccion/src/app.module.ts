@@ -6,12 +6,18 @@ import {HttpCalculadoraModule} from "./calculator/http-calculadora.module";
 import {UsuarioModule} from "./usuario/usuario.module";
 import {TypeOrmModule} from "@nestjs/typeorm";
 import {UsuarioEntity} from "./usuario/usuario.entity";
+import {MascotaModule} from "./mascota/mascota.module";
+import {VacunaModule} from "./vacuna/vacuna.module";
+import {VacunaEntity} from "./vacuna/vacuna.entity";
+import {MascotaEntity} from "./mascota/mascota.entity";
 
 @Module({
   imports: [
       HttpCalculadoraModule,
       HttpJuegoModule,
       UsuarioModule,
+      MascotaModule,
+      VacunaModule,
       TypeOrmModule.forRoot({
           name: 'default',
           type: 'mysql',
@@ -21,7 +27,9 @@ import {UsuarioEntity} from "./usuario/usuario.entity";
           password: '0120saul',
           database: 'ejemplo',
           entities: [
-                UsuarioEntity
+                UsuarioEntity,
+                VacunaEntity,
+                MascotaEntity,
           ],
           synchronize: true,
           dropSchema: false,
