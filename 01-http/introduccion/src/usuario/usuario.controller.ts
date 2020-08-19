@@ -7,9 +7,12 @@ import {
     Put,
     Delete,
     BadRequestException,
-    InternalServerErrorException, NotFoundException
+    InternalServerErrorException, NotFoundException, Res
 } from "@nestjs/common";
 import {UsuarioService} from "./usuario.service";
+import {validate, ValidationError} from "class-validator";
+import {UsuarioCreateDto} from "./dto/usuario.create-dto";
+import {UsuarioUpdateDto} from "./dto/usuario.update-dto";
 
 @Controller('usuario')
 export class UsuarioController{
@@ -57,11 +60,22 @@ export class UsuarioController{
     async crearUno(
         @Body() parametrosCuerpo
     ) {
+        const usuario = new UsuarioCreateDto()
+        usuario.nombre = parametrosCuerpo.nombre
+        usuario.apellido = parametrosCuerpo.apellido
+        usuario.cedula = parametrosCuerpo.cedula
+        usuario.sueldo = parametrosCuerpo.sueldo
+        usuario.fechaNacimiento = parametrosCuerpo.fechaNacimiento
+        usuario.fechaHoraNacimiento = parametrosCuerpo.fechaHoraNacimiento
         try{
-            //DEBER
-            //VALIDACION CON DTO USUARIO VALIDATOR
-            const respuesta = await this._usuarioService.crearUno(parametrosCuerpo);
-            return respuesta
+            const error: ValidationError[] = await  validate(usuario)
+            if(error.length == 0) {
+                const respuesta = await this._usuarioService.crearUno(parametrosCuerpo);
+                return respuesta
+            }else{
+                console.log('Valores Inválidos')
+                return 'Datos Inválidos'
+            }
         }catch (e) {
             console.error(e)
             throw new BadRequestException( {
@@ -110,14 +124,26 @@ export class UsuarioController{
         @Param() parametrosRuta,
         @Body() parametrosCuerpo
     ){
+        const usuario = new UsuarioUpdateDto()
+        usuario.nombre = parametrosCuerpo.nombre
+        usuario.apellido = parametrosCuerpo.apellido
+        usuario.cedula = parametrosCuerpo.cedula
+        usuario.sueldo = parametrosCuerpo.sueldo
+        usuario.fechaNacimiento = parametrosCuerpo.fechaNacimiento
+        usuario.fechaHoraNacimiento = parametrosCuerpo.fechaHoraNacimiento
         const id = Number(parametrosRuta.id);
         const usuarioEditado = parametrosCuerpo;
         usuarioEditado.id = id;
-
         try{
-            console.log('usuarioEditado', usuarioEditado)
-            const respuesta = await this._usuarioService.editarUno(parametrosCuerpo);
-            return respuesta
+            const error: ValidationError[] = await  validate(usuario)
+            if(error.length == 0) {
+                console.log('usuarioEditado', usuarioEditado)
+                const respuesta = await this._usuarioService.editarUno(parametrosCuerpo);
+                return respuesta
+            }else{
+                console.log('Valores Inválidos')
+                return 'Datos Inválidos'
+            }
         }catch (e) {
             console.error(e)
             throw new BadRequestException( {
