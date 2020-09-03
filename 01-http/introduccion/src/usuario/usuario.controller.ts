@@ -13,6 +13,7 @@ import {UsuarioService} from "./usuario.service";
 import {validate, ValidationError} from "class-validator";
 import {UsuarioCreateDto} from "./dto/usuario.create-dto";
 import {UsuarioUpdateDto} from "./dto/usuario.update-dto";
+import {MascotaService} from "../mascota/mascota.sevice";
 
 @Controller('usuario')
 export class UsuarioController{
@@ -35,7 +36,8 @@ export class UsuarioController{
     public idActual = 3;
 
     constructor(
-        private readonly _usuarioService: UsuarioService
+        private readonly _usuarioService: UsuarioService,
+        private readonly _mascotaService: MascotaService
     ){
 
     }
@@ -182,8 +184,125 @@ export class UsuarioController{
         // return this.arregloUsuarios[indice];
     }
 
+    @Post('crearUsuarioYCrearMascota')
+    async crearUsuarioYCrearMascota(
+        @Body() parametrosCuerpo
+    ) {
+        const usuario = parametrosCuerpo.usuario;
+        const mascota = parametrosCuerpo.mascota
+        //validar Usuario
+        //validar Mascota
+        //--> Crear DTOS
+        let usuarioCreado
+        try{
+            usuarioCreado = await this._usuarioService.crearUno(usuario)
+        }catch (e) {
+            console.error(e);
+            throw  new InternalServerErrorException({
+                mensaje: "Error creando Usuario"
+            })
+        }
+
+        if(usuarioCreado){
+            mascota.usuario = usuarioCreado.id;
+            let mascotaCreada;
+            try{
+                mascotaCreada = await this._mascotaService.crearNuevaMascota(mascota)
+            }catch (e) {
+                console.error(e);
+                throw  new InternalServerErrorException({
+                    mensaje: "Error creando Mascota"
+                })
+            }
+
+            if(mascotaCreada){
+                return {
+                    mascota: mascotaCreada,
+                    usuario: usuarioCreado
+                }
+            }else{
+                throw new InternalServerErrorException({
+                    mensaje: "error creando mascota"
+                })
+            }
+
+        }else{
+            throw new InternalServerErrorException({
+                mensaje: "error creando Mascota"
+            })
+        }
+
+    }
+
+    //npm install ejs
+
+    @Get('vista/usuario')
+    vistaUsuario(
+        @Res() res
+    ){
+        const nombreControlador = 'Oscar';
+        res.render(
+            'usuario/ejemplo', //nombre de la vista (archivo)
+            {  // parametros de la vista
+                nombre: nombreControlador,
+            })
+    }
+
+    @Get('vista/faq')
+    faq(
+        @Res() res
+    ){
+        res.render('usuario/faq')//Nombre de la vista (archivo)
+    }
+
+    @Get('vista/inicio')
+    async inicio(
+        @Res() res
+    ) {
+        let resultadoEncontrado
+        try {
+            resultadoEncontrado = await this._usuarioService.buscarTodos();
+        }catch (error) {
+            throw  new InternalServerErrorException('Error encontrando usuarios')
+        }
+        if(resultadoEncontrado) {
+            res.render(
+                'usuario/inicio',
+                {
+                    arregloUsuarios: resultadoEncontrado
+                }
+            )//Nombre de la vista (archivo)
+        }else{
+            throw new NotFoundException('No se encontraron usuarios')
+        }
+    }
+
+    @Get('vista/login')
+    login(
+        @Res() res
+    ){
+        res.render('usuario/login')//Nombre de la vista (archivo)
+    }
+
+    @Get('vista/crear')
+    crearUsuarioVista(
+        @Res() res
+    ){
+        res.render('usuario/crear')//Nombre de la vista (archivo)
+    }
+
+    // @Post('/usuario/crearDesdeVista')
+    // crearDesdeVista(
+    //
+    // ){
+    //
+    // }
+
+
 // Usuarrio tiene muchas mascotas
 // Mascota tiene muchas vacunas
+
+
 
 
 }

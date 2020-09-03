@@ -1,0 +1,51 @@
+<%- include('../compartido/estilos.generales/estilos-generales-component')%>
+<%- include('../compartido/menu/menu-component')%>
+<!--<h1>INICIO</h1>-->
+
+<!--<button-->
+<!--    onclick="mensajeAlertar()">-->
+<!--    ALERTAR!!-->
+<!--</button>-->
+
+<% const oscar = {nombre:"OSCAR", apellido:"UMATAMBO", cedula:"1725288011"}%>
+<% const numero = 25%>
+<% const mensaje = "Que mas ve"%>
+
+<p><%=oscar.nombre%> <%=oscar.apellido%></p>
+<p><%=numero%></p>
+<p><%=mensaje%></p>
+
+<% const arregloNumeros = [1,2,3,4,5]%>
+
+<ul>
+    <% arregloNumeros.forEach( (objeto)=>{%>
+        <li><%= objeto %></li>
+    <% } ) %>
+</ul>
+
+
+<a href="/usuario/vista/crear">
+    <button>CREAR</button>
+</a>
+<table>
+    <tr>
+        <th>NOMBRE</th>
+        <th>APELLIDO</th>
+        <th>CEDULA</th>
+        <th>ACCIONES</th>
+    </tr>
+    <% arregloUsuarios.forEach( (objeto)=>{%>
+        <tr>
+            <td><%= objeto.nombre%></td>
+            <td><%= objeto.apellido%></td>
+            <td><%= objeto.cedula%></td>
+            <td>
+                <button>VER</button>
+                <button>EDITAR</button>
+                <button>ELIMINAR</button>
+            </td>
+        </tr>
+    <% } ) %>
+</table>
+
+<%- include('../compartido/funcionalidad.general/funcionalidad-general-component')%>

@@ -1,0 +1,8 @@
+body{
+    font-family: "Times New Roman";
+    color: blueviolet;
+}
+
+td, th {
+    border: 1px solid #062c33;
+}
