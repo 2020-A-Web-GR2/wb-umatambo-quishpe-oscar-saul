@@ -1,7 +1,7 @@
 import {Module} from "@nestjs/common";
 import {TypeOrmModule} from "@nestjs/typeorm";
 import {MascotaEntity} from "./mascota.entity";
-import {MascotaSevice} from "./mascota.sevice";
+import {MascotaService} from "./mascota.sevice";
 
 // @Nombre() ------> esto es un decorador
 @Module({
@@ -18,10 +18,10 @@ import {MascotaSevice} from "./mascota.sevice";
 
     ],
     providers: [
-        MascotaSevice
+        MascotaService
     ],
     exports:[
-        MascotaSevice
+        MascotaService
     ]
 })
 export class MascotaModule{
