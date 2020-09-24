@@ -7,13 +7,14 @@ import {
     Put,
     Delete,
     BadRequestException,
-    InternalServerErrorException, NotFoundException, Res
+    InternalServerErrorException, NotFoundException, Res, Query
 } from "@nestjs/common";
 import {UsuarioService} from "./usuario.service";
 import {validate, ValidationError} from "class-validator";
 import {UsuarioCreateDto} from "./dto/usuario.create-dto";
 import {UsuarioUpdateDto} from "./dto/usuario.update-dto";
 import {MascotaService} from "../mascota/mascota.sevice";
+import {UsuarioEntity} from "./usuario.entity";
 
 @Controller('usuario')
 export class UsuarioController{
@@ -257,11 +258,12 @@ export class UsuarioController{
 
     @Get('vista/inicio')
     async inicio(
-        @Res() res
+        @Res() res,
+        @Query() parametrosConsulta
     ) {
         let resultadoEncontrado
         try {
-            resultadoEncontrado = await this._usuarioService.buscarTodos();
+            resultadoEncontrado = await this._usuarioService.buscarTodos(parametrosConsulta.busqueda);
         }catch (error) {
             throw  new InternalServerErrorException('Error encontrando usuarios')
         }
@@ -269,7 +271,8 @@ export class UsuarioController{
             res.render(
                 'usuario/inicio',
                 {
-                    arregloUsuarios: resultadoEncontrado
+                    arregloUsuarios: resultadoEncontrado,
+                    parametrosConsulta: parametrosConsulta
                 }
             )//Nombre de la vista (archivo)
         }else{
@@ -284,25 +287,126 @@ export class UsuarioController{
         res.render('usuario/login')//Nombre de la vista (archivo)
     }
 
-    @Get('vista/crear')
+    @Get('vista/crear') // Controlador
     crearUsuarioVista(
+        @Query() parametrosConsulta,
         @Res() res
-    ){
-        res.render('usuario/crear')//Nombre de la vista (archivo)
+    ) {
+        return res.render(
+            'usuario/crear',
+            {
+                error: parametrosConsulta.error,
+                nombre: parametrosConsulta.nombre,
+                apellido: parametrosConsulta.apellido,
+                cedula: parametrosConsulta.cedula
+            }
+        )
     }
 
-    // @Post('/usuario/crearDesdeVista')
-    // crearDesdeVista(
-    //
-    // ){
-    //
-    // }
+    @Post('crearDesdeVista')
+    async crearDesdeVista(
+        @Body() parametrosDeCuerpo,
+        @Res() res
+    ) {
+        //validar los datos con un rico dto
+        let nombreApellidoConsulta;
+        let cedulaConsulta;
+        if(parametrosDeCuerpo.cedula.length && parametrosDeCuerpo.nombre && parametrosDeCuerpo.apellido){
+            nombreApellidoConsulta = `&nombre=${parametrosDeCuerpo.nombre}&apellido=${parametrosDeCuerpo.apellido}`
+            if(parametrosDeCuerpo.cedula.length === 10){
+                cedulaConsulta = `&cedula=${parametrosDeCuerpo.cedula}`
+            }else{
+                const mensajeError = 'CEDULA INCORRECTA'
+                return res.redirect('/usuario/vista/crear?error=' + mensajeError + nombreApellidoConsulta)
+            }
+        }else{
+            const mensajeError = 'Datos Incorrectos'
+            return res.redirect('/usuario/vista/crear?error=' + mensajeError)
+        }
+        let respuestaCreacionUsuario;
+        try {
+            respuestaCreacionUsuario = await this._usuarioService.crearUno(parametrosDeCuerpo);
+        }catch(error){
+            console.error(error);
+            const mensajeError = 'CREANDO USUARIO'
+            return res.redirect('/usuario/vista/crear?error=' + mensajeError + nombreApellidoConsulta + cedulaConsulta);
+        }
+        if(respuestaCreacionUsuario){
+            return res.redirect('vista/inicio')
+        }else{
+            const mensajeError = 'CREANDO USUARIO'
+            return res.redirect('/usuario/vista/crear?error=' + mensajeError + nombreApellidoConsulta + cedulaConsulta);
+        }
+    }
+
+    @Post('editarDesdeVista/:id')
+    async editarDesdeVista(
+        @Param() parametrosRuta,
+        @Body() parametrosCuerpo,
+        @Res() res,
+    ) {
+        const usuarioEditado = {
+            id: Number(parametrosRuta.id),
+            nombre: parametrosCuerpo.nombre,
+            apellido: parametrosCuerpo.apellido,
+           // cedula: parametrosRuta.cedula,
+        } as UsuarioEntity
+        try {
+            await this._usuarioService.editarUno(usuarioEditado);
+            return res.redirect('/usuario/vista/inicio?mensaje=Usuario editado');
+        }catch (error) {
+            console.error(error);
+            return res.redirect('/usuario/vista/inicio?mensaje=Error editando usuario');
+        }
+    }
+
+    @Post('eliminarDesdeVista/:id')
+    async eliminarDesdeVista(
+        @Param() parametrosRuta,
+        @Res() res
+    ) {
+        try {
+            const id = Number(parametrosRuta.id);
+            await this._usuarioService.eliminarUno(id);
+            return  res.redirect('/usuario/vista/inicio?mensaje=Usuario eliminado')
+        } catch (error) {
+            console.log(error)
+            return res.redirect('/ususario/vista/inicio?eror=Error eliminando usuario')
+        }
+
+    }
+
+    @Get('vista/editar/:id')
+    async editarUsuario(
+        @Query() parametrosConsulta,
+        @Param() parametrosRuta,
+        @Res() res
+    ) {
+        const id = Number(parametrosRuta.id)
+        let usuarioEncontrado;
+        try {
+            usuarioEncontrado = await this._usuarioService.buscarUno(id);
+        }catch(error){
+            console.error('Error del servidor');
+            return res.redirect('/usuario/vista/inicio?mensaje=Error buscando usuario');
+        }
+        if(usuarioEncontrado){
+            return res.render(
+                'usuario/crear',
+                {
+                    error: parametrosConsulta.error,
+                    usuario: usuarioEncontrado
+                }
+            )
+        }else{
+            return res.redirect('/usuario/vista/inicio?mensaje=usuario no encontrado')
+        }
+    }
 
 
 // Usuarrio tiene muchas mascotas
 // Mascota tiene muchas vacunas
 
 
-
-
+//jejejejejej
 }
