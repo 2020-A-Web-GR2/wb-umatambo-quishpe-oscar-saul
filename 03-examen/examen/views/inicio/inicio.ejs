@@ -1,0 +1,67 @@
+<% const esAdministrador = roles.some( (rol)=> rol == 'Administrador')%>
+
+<% if(esAdministrador){%>
+
+<%- include('../estilo/estilos-generales')%>
+
+    <h1>DEPARTAMENTOS</h1>
+    <row>
+        <div id="divPadre">
+            <div id="divHijo">
+                <form action="/departamento/crear">
+                    <button type="submit"> Crear un nuevo departamento</button>
+                </form>
+            </div>
+            <div id="divHijo">
+                <form action="/departamento/inicio">
+                    <label for="busqueda">BUSQUEDA POR UBICACIÓN O PRECIO:</label>
+                    <input id="busqueda" type="text" name="busqueda">
+                    <button type="submit"> Buscar</button>
+                </form>
+            </div>
+            <div class="centerTable">
+                <table>
+                    <tr>
+                        <th>Área</th>
+                        <th># Cuartos</th>
+                        <th># Pisos</th>
+                        <th>Precio</th>
+                        <th>Ubicación</th>
+                    </tr>
+                    <% departamentos.forEach( (objeto)=>{ %>
+                        <tr>
+                            <td><%= objeto.areaTotal%> m²</td>
+                            <td><%= objeto.numeroCuartos%></td>
+                            <td><%= objeto.numeroPiso%></td>
+                            <td>$<%= objeto.precio%></td>
+                            <td><%= objeto.ubicacion%></td>
+                            <td>
+                                <a href="/departamento/editar/<%=objeto.id%>">
+                                    <button>EDITAR</button>
+                                </a>
+                                <form action="/departamento/eliminar/<%= objeto.id%>"
+                                      method="POST"
+                                >
+                                    <button type="submit">ELIMINAR</button>
+                                </form>
+                            </td>
+                        </tr>
+                    <% } ) %>
+                </table>
+            </div>
+            <div id="divHijo">
+                <%if(typeof parametrosConsulta.mensaje != 'undefined') {%>
+                    <p>MENSAJE: <%= parametrosConsulta.mensaje%></p>
+                <%}%>
+            </div>
+            <div>
+                <a href="/logout">
+                    <button>logout</button>
+                </a>
+            </div>
+        </div>
+    </row>
+
+
+<% } %>
+

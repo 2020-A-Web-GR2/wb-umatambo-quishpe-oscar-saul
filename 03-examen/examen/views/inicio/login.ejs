@@ -1,0 +1,23 @@
+<%- include('../estilo/estilos-generales')%>
+
+<h1>LOGIN</h1>
+<row>
+    <div id="divPadre">
+        <div id="divHijo" class="centerTable">
+            <form action="/login" method="POST">
+                <table>
+                    <tr>
+                        <td><label for="usuarioId">USUARIO</label></td>
+                        <td><input id="usuarioId" type="text" name="usuario"></td>
+                    </tr>
+                    <tr>
+                        <td><label for="passwordId">PASSWORD</label></td>
+                        <td><input id="passwordId" type="password" name="password"></td>
+                    </tr>
+                </table>
+                <br>
+                <button type="submit">LOGEARSE</button>
+            </form>
+        </div>
+    </div>
+</row>

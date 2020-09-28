@@ -1,0 +1,74 @@
+<% const esAdministrador = roles.some( (rol)=> rol == 'Administrador')%>
+
+<% if(esAdministrador){%>
+
+<%- include('../estilo/estilos-generales')%>
+
+<% const existeDepartamento = typeof departamento != 'undefined' %>
+
+<% let existeAreaTotal = typeof areaTotal !== 'undefined' %>
+<% let existeNumeroCuartos = typeof numeroCuartos !== 'undefined' %>
+<% let existeNumeroPiso = typeof numeroPiso !== 'undefined' %>
+<% let existePrecio = typeof precio !== 'undefined' %>
+<% let existeUbicacion = typeof ubicacion !== 'undefined' %>
+
+<%if(existeDepartamento) {%>
+    <% existeAreaTotal = true %>
+    <% existeNumeroCuartos = true %>
+    <% existeNumeroPiso = true %>
+    <% existePrecio = true %>
+    <% existeUbicacion = true %>
+    <% areaTotal = departamento.areaTotal%>
+    <% numeroCuartos = departamento.numeroCuartos%>
+    <% numeroPiso = departamento.numeroPiso%>
+    <% precio = departamento.precio%>
+    <% ubicacion = departamento.ubicacion%>
+<%}%>
+
+<h1> <%= existeDepartamento ? 'EDITAR' : 'CREAR'%> DEPARTAMENTO</h1>
+<row>
+    <div id="divPadre">
+        <div id="divHijo">
+            <% if ( typeof error !== 'undefined') {%>
+            <p> ERROR <%=error%></p>
+            <%}%>
+        </div>
+        <div id="divHijo" class="centerTable">
+            <form action="<%=existeDepartamento ? '/departamento/editar/' + departamento.id : '/departamento/crear' %>"
+                  method="POST">
+                <table>
+                    <tr>
+                        <td><label for="areaTotalID">Área Total:    </label></td>
+                        <td><input id="areaTotalID" type="text" name="areaTotal" value="<%= existeAreaTotal ? areaTotal : '' %>"></td>
+                    </tr>
+                    <tr>
+                        <td><label for="numeroCuartoslID">Número de Cuartos:    </label></td>
+                        <td><input id="numeroCuartoslID" type="text" name="numeroCuartos" value="<%= existeNumeroCuartos ? numeroCuartos : '' %>"></td>
+                    </tr>
+                    <tr>
+                        <td><label for="numeroPisolID">Número de Piso:  </label></td>
+                        <td><input id="numeroPisolID" type="text" name="numeroPiso" value="<%= existeNumeroPiso ? numeroPiso : '' %>"></td>
+                    </tr>
+                    <tr>
+                        <td><label for="preciolID">Precio:  </label></td>
+                        <td><input id="preciolID" type="text" name="precio" value="<%= existePrecio ? precio : '' %>"></td>
+                    </tr>
+                    <tr>
+                        <td><label for="ubicacionlID">Ubicación:    </label></td>
+                        <td><input id="ubicacionlID" type="text" name="ubicacion" value="<%= existeUbicacion ? ubicacion : '' %>"></td>
+                    </tr>
+                </table>
+                <div id="divHijo">
+                    <br>
+                    <button type="submit"><%=existeDepartamento ? "EDITAR" : "CREAR" %></button>
+                    <button type="reset">RESETEAR</button>
+                    <a href="/departamento/inicio">
+                        <button type="button">CANCELAR</button>
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</row>
+
+<% } %>

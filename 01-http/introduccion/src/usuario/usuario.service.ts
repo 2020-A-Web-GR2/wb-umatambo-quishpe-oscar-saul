@@ -10,6 +10,7 @@ export class UsuarioService{
         private repositorio: Repository<UsuarioEntity>
     ){
     }
+
     crearUno(nuevoUsuario: UsuarioEntity){
         return this.repositorio.save(nuevoUsuario) //Promesa
     }
@@ -62,20 +63,24 @@ export class UsuarioService{
         //         }
         //     ]
         // }
-        const consulta: FindManyOptions<UsuarioEntity> = {
-            where: [
-                {
-                    nombre: Like(`%${textoDeConsulta}%`)
-                },
-                {
-                    apellido: Like(`%${textoDeConsulta}%`)
-                },
-                {
-                    cedula: Like(`%${textoDeConsulta}%`)
-                },
-            ]
+        if(textoDeConsulta !== undefined) {
+            const consulta: FindManyOptions<UsuarioEntity> = {
+                where: [
+                    {
+                        nombre: Like(`%${textoDeConsulta}%`)
+                    },
+                    {
+                        apellido: Like(`%${textoDeConsulta}%`)
+                    },
+                    {
+                        cedula: Like(`%${textoDeConsulta}%`)
+                    },
+                ]
+            }
+            return this.repositorio.find(consulta) //Promesa
+        }else{
+            return this.repositorio.find()
         }
-        return this.repositorio.find(consulta) //Promesa
     }
 
     buscarUno(id: number){

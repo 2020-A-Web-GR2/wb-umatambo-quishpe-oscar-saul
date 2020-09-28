@@ -54,9 +54,6 @@ export class UsuarioController{
                 mensaje: 'Error del servidor'
             })
         }
-
-
-        // return this.arregloUsuarios
     }
 
     @Post()
@@ -85,14 +82,6 @@ export class UsuarioController{
                 mensaje: 'Error validando datos'
             });
         }
-
-        // const  nuevoUsuario = {
-        //     id: this.idActual + 1,
-        //     nombre: parametrosCuerpo.nombre
-        // };
-        // this.arregloUsuarios.push(nuevoUsuario)
-        // this.idActual = this.idActual + 1;
-        // return nuevoUsuario;
     }
 
     @Get(':id')
@@ -265,7 +254,7 @@ export class UsuarioController{
         try {
             resultadoEncontrado = await this._usuarioService.buscarTodos(parametrosConsulta.busqueda);
         }catch (error) {
-            throw  new InternalServerErrorException('Error encontrando usuarios')
+            throw  new InternalServerErrorException('Error encontrando usuario')
         }
         if(resultadoEncontrado) {
             res.render(
@@ -276,7 +265,7 @@ export class UsuarioController{
                 }
             )//Nombre de la vista (archivo)
         }else{
-            throw new NotFoundException('No se encontraron usuarios')
+            throw new NotFoundException('No se encontraron usuario')
         }
     }
 
